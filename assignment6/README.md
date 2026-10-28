@@ -1,16 +1,27 @@
-# React + Vite
+# Post Dashboard — Assignment 6
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small React app that loads posts from an API and shows them in a list.
+You can also filter the posts by title.
 
-Currently, two official plugins are available:
+## How to run it
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```
+npm install
+npm run dev
+```
 
-## React Compiler
+## File organization
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `src/api/postsApi.js` — gets the posts from the API. Just plain `fetch`, no React stuff in here.
+- `src/reducer/postsReducer.js` — handles the posts, loading, and error state with `useReducer`. Has three actions: `FETCH_START`, `FETCH_SUCCESS`, `FETCH_ERROR`.
+- `src/components/Post.jsx` — shows one single post (title + body).
+- `src/components/PostList.jsx` — takes the list of posts and shows a `Post` for each one.
+- `src/components/FilterForm.jsx` — the input box where you type to filter posts by title.
+- `src/App.jsx` — the main component. It fetches the posts with `useEffect` on page load, keeps the filter text in state, and decides what to show: loading, error, "no posts found", or the list.
 
-## Expanding the ESLint configuration
+## Challenges I faced
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Getting used to `useReducer` instead of just using `useState` for everything. It took a bit to understand that the reducer should only return new state and never do the fetching itself.
+- Making sure the filtering did not get saved into its own state. The posts are the only thing stored in state, and the filtered list is just calculated every time the component renders.
+- Remembering to cancel the fetch request when the component unmounts, using `AbortController`, so there are no errors from a request that finishes after the component is gone.
+- Handling all three UI states (loading, error, empty) without the app crashing if the fetch fails.
